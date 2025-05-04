@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from ipcx_typed import Client
 
-TOKEN = "YOUR_DISCORD_BOT_TOKEN"
+TOKEN = ""
 
 
 class UserSessionParam(BaseModel):

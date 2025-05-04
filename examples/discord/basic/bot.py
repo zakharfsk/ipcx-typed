@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from ipcx_typed import Server
 
-TOKEN = "YOUR_DISCORD_BOT_TOKEN"
+TOKEN = ""
 
 
 class GuildParam(BaseModel):

@@ -4,47 +4,10 @@ on:
   release:
     types: [released]
   workflow_dispatch:
-    inputs:
-      trigger:
-        description: 'Trigger publish workflow'
-        required: false
-        type: boolean
+
 
 jobs:
-  wait-for-workflows:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait for other workflows
-        uses: lewagon/wait-on-check-action@v1.3.1
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'Analyze'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-      - name: Wait for lint
-        uses: lewagon/wait-on-check-action@v1.3.1
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'Lint'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-      - name: Wait for format
-        uses: lewagon/wait-on-check-action@v1.3.1
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'Format'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-      - name: Wait for test
-        uses: lewagon/wait-on-check-action@v1.3.1
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'Test'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-
   publish:
-    needs: [wait-for-workflows]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

@@ -1,6 +1,6 @@
 [project]
 name = "ipcx-typed"
-version = "0.1.0"
+version = "0.1.1"
 description = "Inter-Process Communication (IPC) library for Python with type safety"
 authors = [
     {name = "zakharfsk",email = "68950796+zakharfsk@users.noreply.github.com"}
@@ -66,3 +66,42 @@ coverage = ">=7.4.1"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
+pre-commit = "^4.2.0"
+ruff = "^0.11.8"
+
+[tool.ruff]
+line-length = 120
+include = ["ipcx_typed/**", "examples/**", "tests/**"]
+
+[tool.ruff.lint]
+ignore = [
+    "E501", 
+    "N999", 
+    "E402", 
+    "S311",
+    "S101",
+    
+    # These are recommended by Ruff if the formatter is to be used: https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002"
+]
+select = ["E", "F", "N", "ASYNC", "S", "ERA", "I"]
+fixable = ["ALL"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+[tool.ruff.format]
+docstring-code-format = true

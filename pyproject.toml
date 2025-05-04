@@ -13,6 +13,9 @@ dependencies = [
 ]
 keywords = [
     "ipc",
+    "ipcx",
+    "ipcx-typed",
+    "ipcx-typed-python",
     "discord.py",
     "fastapi",
     "python",
@@ -25,7 +28,7 @@ classifiers = [
     "Framework :: Pydantic",
     "Framework :: Pydantic :: 2",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.9",

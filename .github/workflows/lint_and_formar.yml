@@ -41,6 +41,7 @@ jobs:
   format:
     runs-on: ubuntu-latest
     name: Format
+    needs: [lint]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

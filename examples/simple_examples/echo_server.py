@@ -35,7 +35,7 @@ async def main():
 
     try:
         # Keep server running
-        while True:
+        while True:  # noqa: ASYNC110
             await asyncio.sleep(1)
     except KeyboardInterrupt:
         logger.info("Shutting down server...")

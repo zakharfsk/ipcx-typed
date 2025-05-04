@@ -5,6 +5,8 @@ description = "Inter-Process Communication (IPC) library for Python with type sa
 authors = [
     {name = "zakharfsk",email = "68950796+zakharfsk@users.noreply.github.com"}
 ]
+license = "MIT"
+license-file = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

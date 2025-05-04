@@ -2,9 +2,21 @@ name: "Lint and Format"
 
 on:
   push:
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+      - "docs/**"
+      - ".gitignore"
+      - "pyproject.toml"
     branches:
       - main
   pull_request:
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+      - "docs/**"
+      - ".gitignore"
+      - "pyproject.toml"
     branches:
       - main
 

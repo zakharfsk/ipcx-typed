@@ -4,9 +4,10 @@
 
 
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ipcx-typed?logo=python&logoColor=white&label=Python)](https://pypi.org/project/ipcx-typed/)
+[![CodeQL](https://github.com/zakharfsk/ipcx-typed/actions/workflows/codeql.yml/badge.svg)](https://github.com/zakharfsk/ipcx-typed/actions/workflows/codeql.yml)
+[![Tests](https://github.com/zakharfsk/ipcx-typed/actions/workflows/test.yml/badge.svg)](https://github.com/zakharfsk/ipcx-typed/actions/workflows/test.yml)
 [![PyPI version](https://badge.fury.io/py/ipcx-typed.svg)](https://badge.fury.io/py/ipcx-typed)
 [![License](https://img.shields.io/github/license/zakharfsk/ipcx-typed)](LICENSE)
-[![Tests](https://github.com/zakharfsk/ipcx-typed/actions/workflows/test.yml/badge.svg)](https://github.com/zakharfsk/ipcx-typed/actions/workflows/test.yml)
 
 <h3>A powerful, type-safe inter-process communication library for Python</h3>
 

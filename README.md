@@ -9,7 +9,7 @@
 [![PyPI version](https://badge.fury.io/py/ipcx-typed.svg)](https://badge.fury.io/py/ipcx-typed)
 [![License](https://img.shields.io/github/license/zakharfsk/ipcx-typed)](LICENSE)
 
-<h3>A powerful, type-safe inter-process communication library for Python</h3>
+<h3>A powerful, type-safe inter-process communication library for Python with type safety</h3>
 
 </div>
 

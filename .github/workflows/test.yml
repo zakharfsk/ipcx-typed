@@ -4,11 +4,19 @@ on:
   push:
     paths-ignore:
       - "**.md"
+      - "LICENSE"
+      - "examples/**"
+      - "docs/**"
+      - ".gitignore"
     branches:
       - main
   pull_request:
     paths-ignore:
       - "**.md"
+      - "LICENSE"
+      - "examples/**"
+      - "docs/**"
+      - ".gitignore"
     branches:
       - main
 

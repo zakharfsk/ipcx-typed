@@ -7,7 +7,7 @@ import aiohttp
 from pydantic import BaseModel, ValidationError
 
 from ipcx_typed._types import T
-from ipcx_typed.models import Headers, Request
+from ipcx_typed.models import Headers, Request, Response
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +79,7 @@ class Client:
         request_model: BaseModel,
         response_model: Type[T],
         retry_count: int = 0,
-    ) -> T:
+    ) -> Response[T]:
         """
         Send a request to the server and wait for a response.
 
@@ -140,13 +140,13 @@ class Client:
 
                         if not response_data.get("success", False):
                             error_data = response_data.get("data", {})
-                            raise ValueError(f"Server returned error: {error_data}")
+                            return Response.create_error(error=error_data)
 
-                        return response_model.model_validate(response_data.get("data", {}))
+                        return Response.create_success(response_model.model_validate(response_data.get("data", {})))
 
                     except json.JSONDecodeError as e:
                         logger.error(f"Failed to decode JSON response: {e}")
-                        raise ValueError("Invalid JSON response from server")
+                        return Response.create_error(error=str(e))
 
         except (aiohttp.ClientError, ConnectionError) as e:
             logger.warning(f"Connection error (attempt {retry_count + 1}/{self.max_retries}): {e}")
@@ -155,8 +155,8 @@ class Client:
 
         except ValidationError as e:
             logger.error(f"Validation error: {e}")
-            raise ValueError(f"Invalid response format: {e}")
+            return Response.create_error(error=str(e))
 
         except Exception as e:
             logger.error(f"Unexpected error: {e}")
-            raise
+            return Response.create_error(error=str(e))

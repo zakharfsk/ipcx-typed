@@ -6,6 +6,8 @@ from typing import Optional, Type, TypeVar
 import aiohttp
 from pydantic import BaseModel, ValidationError
 
+from ipcx_typed.models import Headers, Request
+
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T", bound=BaseModel)
@@ -18,6 +20,7 @@ class Client:
         self,
         host: str = "localhost",
         port: int = 8080,
+        secret_key: Optional[str] = None,
         max_retries: int = 3,
         retry_delay: float = 5.0,
         timeout: Optional[float] = 30.0,
@@ -38,6 +41,7 @@ class Client:
         self.retry_delay = retry_delay
         self.timeout = aiohttp.ClientTimeout(total=timeout) if timeout else None
         self.session: Optional[aiohttp.ClientSession] = None
+        self.secret_key = secret_key
 
     async def __aenter__(self) -> "Client":
         """Context manager entry point. Establishes the WebSocket session."""
@@ -105,13 +109,14 @@ class Client:
                 autoping=False,
                 heartbeat=30.0,
             ) as websocket:
-                payload = {
-                    "endpoint": endpoint,
-                    "data": request_model.model_dump(),
-                }
+                payload = Request(
+                    endpoint=endpoint,
+                    data=request_model.model_dump(),
+                    headers=Headers(authorization=self.secret_key),
+                )
 
                 logger.debug(f"Sending payload: {payload}")
-                await websocket.send_json(payload)
+                await websocket.send_json(payload.model_dump())
 
                 while True:
                     try:

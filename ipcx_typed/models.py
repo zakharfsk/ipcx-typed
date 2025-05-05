@@ -5,6 +5,10 @@ from pydantic import BaseModel, ConfigDict, Field
 T = TypeVar("T")
 
 
+class Headers(BaseModel):
+    authorization: Optional[str] = Field(None, description="The authorization header")
+
+
 class Request(BaseModel):
     """WebSocket request model.
 
@@ -15,8 +19,17 @@ class Request(BaseModel):
 
     endpoint: str = Field(..., min_length=1, description="The name of the endpoint to call")
     data: Any = Field(..., description="The request data to be validated against the endpoint's parameter model")
+    headers: Headers = Field(..., description="Additional headers to send with the request")
 
-    model_config = ConfigDict(json_schema_extra={"example": {"endpoint": "echo", "data": {"message": "Hello, World!"}}})
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "endpoint": "echo",
+                "data": {"message": "Hello, World!"},
+                "headers": {"authorization": "1234567890"},
+            }
+        }
+    )
 
 
 class Response(BaseModel, Generic[T]):

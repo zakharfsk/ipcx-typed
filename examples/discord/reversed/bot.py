@@ -39,7 +39,7 @@ async def get_user_session(ctx: commands.Context, member: discord.Member):
     response = await bot.client.request(
         "get_user_session", UserSessionParam(guild_id=ctx.guild.id, member_id=member.id), UserSessionInfo
     )
-    await ctx.send(f"User {member.name} has session {response.session_id}")
+    await ctx.send(f"User {member.name} has session {response.data.session_id}")
 
 
 bot.run(TOKEN)

@@ -53,16 +53,21 @@ async def test_client_request(server):
     async with Client(host="localhost", port=8082, secret_key="test_secret") as client:
         request_data = EchoRequest(message="Hello, World!")
         response = await client.request("echo", request_data, EchoResponse)
-        assert isinstance(response, EchoResponse)
-        assert response.message == "Hello, World!"
+        assert response.success is True
+        assert isinstance(response.data, EchoResponse)
+        assert response.data.message == "Hello, World!"
+        assert response.error_message is None
 
 
 async def test_client_invalid_endpoint(server):
     """Test client request to invalid endpoint."""
     async with Client(host="localhost", port=8082, secret_key="test_secret") as client:
         request_data = EchoRequest(message="Hello")
-        with pytest.raises(ValueError):
-            await client.request("invalid_endpoint", request_data, EchoResponse)
+        response = await client.request("invalid_endpoint", request_data, EchoResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
+        assert "endpoint" in response.error_message.lower()
 
 
 async def test_client_connection_retry():
@@ -97,19 +102,46 @@ async def test_client_authorization(auth_server):
     async with Client(host="localhost", port=8082, secret_key="test_secret") as client:
         request_data = EchoRequest(message="Hello, World!")
         response = await client.request("echo", request_data, EchoResponse)
-        assert isinstance(response, EchoResponse)
-        assert response.message == "Hello, World!"
+        assert response.success is True
+        assert isinstance(response.data, EchoResponse)
+        assert response.data.message == "Hello, World!"
+        assert response.error_message is None
 
     # Test with invalid secret key
     async with Client(host="localhost", port=8082, secret_key="wrong_secret") as client:
         request_data = EchoRequest(message="Hello, World!")
-        with pytest.raises(ValueError) as exc_info:
-            await client.request("echo", request_data, EchoResponse)
-        assert "Invalid authorization header" in str(exc_info.value)
+        response = await client.request("echo", request_data, EchoResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
+        assert "Invalid authorization header" in response.error_message
 
     # Test with missing secret key
     async with Client(host="localhost", port=8082) as client:
         request_data = EchoRequest(message="Hello, World!")
-        with pytest.raises(ValueError) as exc_info:
-            await client.request("echo", request_data, EchoResponse)
-        assert "Invalid authorization header" in str(exc_info.value)
+        response = await client.request("echo", request_data, EchoResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
+        assert "Invalid authorization header" in response.error_message
+
+
+async def test_client_error_response(server):
+    """Test client handling of error responses."""
+    async with Client(host="localhost", port=8082, secret_key="test_secret") as client:
+        # Test with invalid endpoint
+        response = await client.request("nonexistent", EchoRequest(message="test"), EchoResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
+        assert "endpoint" in response.error_message.lower()
+
+        # Test with invalid request data
+        class InvalidRequest(BaseModel):
+            invalid_field: str
+
+        response = await client.request("echo", InvalidRequest(invalid_field="test"), EchoResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
+        assert "validation" in response.error_message.lower()

@@ -30,7 +30,7 @@ async def main():
 
     try:
         response = await client.request("echo", request, EchoResponse)
-        logger.info(f"Received echo: {response.echo}")
+        logger.info(f"Received echo: {response.data.echo}")
     except Exception as e:
         logger.error(f"Error: {e}")
 

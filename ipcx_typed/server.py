@@ -33,11 +33,8 @@ def route(
 
     def decorator(func: Callable[[T], Awaitable[Any]]) -> Callable[[T], Awaitable[Any]]:
         endpoint = Endpoint(func, param_model, return_model)
-        if not name:
-            Server.ROUTES[func.__name__] = endpoint
-        else:
-            Server.ROUTES[name] = endpoint
-
+        fn_name = name or func.__name__
+        Server.ROUTES[fn_name] = endpoint
         return func
 
     return decorator
@@ -94,10 +91,8 @@ class Server:
 
         def decorator(func: Callable[[T], Awaitable[Any]]) -> Callable[[T], Awaitable[Any]]:
             endpoint = Endpoint(func, param_model, return_model)
-            if not name:
-                self.endpoints[func.__name__] = endpoint
-            else:
-                self.endpoints[name] = endpoint
+            fn_name = name or func.__name__
+            self.endpoints[fn_name] = endpoint
             return func
 
         return decorator

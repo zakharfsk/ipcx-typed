@@ -50,17 +50,19 @@ async def main():
         # Test addition
         add_request = AddRequest(numbers=numbers)
         add_response = await client.request("add", add_request, AddResponse)
-        logger.info(f"Addition result: {add_response.sum}")
+        logger.info(f"Addition result: {add_response.data.sum}")
 
         # Test multiplication
         multiply_request = MultiplyRequest(numbers=numbers)
         multiply_response = await client.request("multiply", multiply_request, MultiplyResponse)
-        logger.info(f"Multiplication result: {multiply_response.product}")
+        logger.info(f"Multiplication result: {multiply_response.data.product}")
 
         # Test statistics
         stats_request = StatsRequest(numbers=numbers)
         stats_response = await client.request("stats", stats_request, StatsResponse)
-        logger.info(f"Statistics: min={stats_response.min}, max={stats_response.max}, average={stats_response.average}")
+        logger.info(
+            f"Statistics: min={stats_response.data.min}, max={stats_response.data.max}, average={stats_response.data.average}"
+        )
 
         # Test error handling with empty list
         empty_request = StatsRequest(numbers=[])

@@ -1,3 +1,4 @@
+# ruff: noqa: S106
 import asyncio
 import logging
 
@@ -21,7 +22,7 @@ class EchoResponse(BaseModel):
 
 async def main():
     # Create client instance
-    client = Client(host="localhost", port=8080)
+    client = Client(host="localhost", port=8080, secret_key="secret")
 
     # Send echo request
     request = EchoRequest(message="Hello, World!")

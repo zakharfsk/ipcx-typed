@@ -1,3 +1,4 @@
+# ruff: noqa: S106
 import asyncio
 import logging
 from typing import List
@@ -40,7 +41,7 @@ class StatsResponse(BaseModel):
 
 async def main():
     # Create client instance
-    client = Client(host="localhost", port=8080)
+    client = Client(host="localhost", port=8080, secret_key="secret")
 
     # Test numbers
     numbers = [1.5, 2.5, 3.5, 4.5]

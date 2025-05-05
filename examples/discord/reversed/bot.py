@@ -1,3 +1,4 @@
+# ruff: noqa: S106
 import discord
 from discord.ext import commands
 from pydantic import BaseModel
@@ -21,7 +22,7 @@ class UserSessionInfo(BaseModel):
 class MyDiscordBot(commands.Bot):
     def __init__(self, intents: discord.Intents):
         super().__init__(command_prefix="!", intents=intents)
-        self.client = Client(host="localhost", port=8080)
+        self.client = Client(host="localhost", port=8080, secret_key="secret")
 
 
 intents = discord.Intents.default()

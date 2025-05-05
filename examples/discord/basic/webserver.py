@@ -1,10 +1,11 @@
+# ruff: noqa: S106
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from ipcx_typed.client import Client
 
 app = FastAPI()
-client = Client(host="localhost", port=8080)
+client = Client(host="localhost", port=8080, secret_key="secret")
 
 
 class GuildParam(BaseModel):

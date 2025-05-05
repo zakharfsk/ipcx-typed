@@ -1,16 +1,15 @@
 import asyncio
 import json
 import logging
-from typing import Optional, Type, TypeVar
+from typing import Optional, Type
 
 import aiohttp
 from pydantic import BaseModel, ValidationError
 
+from ipcx_typed._types import T
 from ipcx_typed.models import Headers, Request
 
 logger = logging.getLogger(__name__)
-
-T = TypeVar("T", bound=BaseModel)
 
 
 class Client:

@@ -1,6 +1,6 @@
 [project]
 name = "ipcx-typed"
-version = "0.1.4"
+version = "0.1.5"
 description = "Inter-Process Communication (IPC) library for Python with type safety"
 authors = [
     {name = "zakharfsk",email = "68950796+zakharfsk@users.noreply.github.com"}

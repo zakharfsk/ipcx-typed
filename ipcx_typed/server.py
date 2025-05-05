@@ -1,41 +1,17 @@
 import json
 import logging
 from collections.abc import Awaitable, Callable
-from typing import Any, Dict, Optional, Type, TypeVar
+from typing import Any, Dict, Optional, Type
 
 import aiohttp.web
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
+from ipcx_typed._types import Endpoint, R, T
 from ipcx_typed.errors import AuthorizationError, EndpointNotFoundError
 
 from .models import Request, Response
 
 logger = logging.getLogger(__name__)
-
-T = TypeVar("T", bound=BaseModel)
-R = TypeVar("R", bound=BaseModel)
-
-
-class Endpoint:
-    """A class representing an API endpoint with its associated function and models."""
-
-    def __init__(
-        self,
-        func: Callable[[T], Awaitable[Any]],
-        param_model: Type[T],
-        return_model: Type[R],
-    ) -> None:
-        """
-        Initialize an Endpoint instance.
-
-        Args:
-            func: The async function to be called when the endpoint is hit
-            param_model: The Pydantic model for validating input parameters
-            return_model: The Pydantic model for validating return values
-        """
-        self.func = func
-        self.param_model = param_model
-        self.return_model = return_model
 
 
 def route(
@@ -44,7 +20,7 @@ def route(
     name: Optional[str] = None,
 ) -> Callable[[Callable[[T], Awaitable[Any]]], Callable[[T], Awaitable[Any]]]:
     """
-    Decorator for registering a route with the server.
+    Decorator for registering a route with this server instance.
 
     Args:
         param_model: The Pydantic model for validating input parameters
@@ -56,9 +32,6 @@ def route(
     """
 
     def decorator(func: Callable[[T], Awaitable[Any]]) -> Callable[[T], Awaitable[Any]]:
-        if not issubclass(param_model, BaseModel):
-            raise ValueError(f"Model must inherit from {BaseModel.__name__} class")
-
         endpoint = Endpoint(func, param_model, return_model)
         if not name:
             Server.ROUTES[func.__name__] = endpoint
@@ -120,15 +93,11 @@ class Server:
         """
 
         def decorator(func: Callable[[T], Awaitable[Any]]) -> Callable[[T], Awaitable[Any]]:
-            if not issubclass(param_model, BaseModel):
-                raise ValueError(f"Model must inherit from {BaseModel.__name__} class")
-
             endpoint = Endpoint(func, param_model, return_model)
             if not name:
                 self.endpoints[func.__name__] = endpoint
             else:
                 self.endpoints[name] = endpoint
-
             return func
 
         return decorator

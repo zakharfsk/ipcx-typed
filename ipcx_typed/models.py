@@ -1,8 +1,8 @@
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Generic, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-T = TypeVar("T")
+from ipcx_typed._types import G
 
 
 class Headers(BaseModel):
@@ -32,7 +32,7 @@ class Request(BaseModel):
     )
 
 
-class Response(BaseModel, Generic[T]):
+class Response(BaseModel, Generic[G]):
     """WebSocket response model.
 
     Attributes:
@@ -42,7 +42,7 @@ class Response(BaseModel, Generic[T]):
     """
 
     success: bool = Field(..., description="Whether the request was successful")
-    data: T = Field(..., description="The response data, type depends on the endpoint's return model")
+    data: G = Field(..., description="The response data, type depends on the endpoint's return model")
     error_message: Optional[str] = Field(None, description="Optional error message if success is False")
 
     model_config = ConfigDict(
@@ -50,7 +50,7 @@ class Response(BaseModel, Generic[T]):
     )
 
     @classmethod
-    def create_success(cls, data: T) -> "Response[T]":
+    def create_success(cls, data: G) -> "Response[G]":
         """Create a successful response.
 
         Args:
@@ -62,7 +62,7 @@ class Response(BaseModel, Generic[T]):
         return cls(success=True, data=data, error_message=None)
 
     @classmethod
-    def create_error(cls, error: str) -> "Response[T]":
+    def create_error(cls, error: str) -> "Response[G]":
         """Create an error response.
 
         Args:

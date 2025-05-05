@@ -59,12 +59,18 @@ async def test_multiple_endpoints(math_server):
         # Test addition
         add_request = MathRequest(a=5.0, b=3.0)
         add_response = await client.request("add", add_request, MathResponse)
-        assert add_response.result == 8.0
+        assert add_response.success is True
+        assert isinstance(add_response.data, MathResponse)
+        assert add_response.data.result == 8.0
+        assert add_response.error_message is None
 
         # Test multiplication
         mult_request = MathRequest(a=5.0, b=3.0)
         mult_response = await client.request("multiply", mult_request, MathResponse)
-        assert mult_response.result == 15.0
+        assert mult_response.success is True
+        assert isinstance(mult_response.data, MathResponse)
+        assert mult_response.data.result == 15.0
+        assert mult_response.error_message is None
 
 
 async def test_concurrent_requests(math_server):
@@ -78,7 +84,10 @@ async def test_concurrent_requests(math_server):
         responses = await asyncio.gather(*requests)
 
         for i, response in enumerate(responses):
-            assert response.result == float(i) + 2.0
+            assert response.success is True
+            assert isinstance(response.data, MathResponse)
+            assert response.data.result == float(i) + 2.0
+            assert response.error_message is None
 
 
 async def test_authorized_concurrent_requests(auth_math_server):
@@ -92,37 +101,48 @@ async def test_authorized_concurrent_requests(auth_math_server):
         responses = await asyncio.gather(*requests)
 
         for i, response in enumerate(responses):
-            assert response.result == float(i) + 2.0
+            assert response.success is True
+            assert isinstance(response.data, MathResponse)
+            assert response.data.result == float(i) + 2.0
+            assert response.error_message is None
 
 
 async def test_error_handling(math_server):
     """Test error handling in integration scenario."""
     async with Client(host="localhost", port=8083, secret_key="math_secret") as client:
         # Test invalid endpoint
-        with pytest.raises(ValueError):
-            await client.request("invalid_op", MathRequest(a=1.0, b=2.0), MathResponse)
+        response = await client.request("invalid_op", MathRequest(a=1.0, b=2.0), MathResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
 
         # Test invalid model type
         class InvalidModel(BaseModel):
             invalid: str
 
-        with pytest.raises(ValueError):
-            await client.request("add", InvalidModel(invalid="data"), MathResponse)
+        response = await client.request("add", InvalidModel(invalid="data"), MathResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
 
 
 async def test_authorization_error_handling(auth_math_server):
     """Test authorization error handling in integration scenario."""
     # Test with wrong secret key
     async with Client(host="localhost", port=8083, secret_key="wrong_secret") as client:
-        with pytest.raises(ValueError) as exc_info:
-            await client.request("add", MathRequest(a=1.0, b=2.0), MathResponse)
-        assert "Invalid authorization header" in str(exc_info.value)
+        response = await client.request("add", MathRequest(a=1.0, b=2.0), MathResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
+        assert "Invalid authorization header" in response.error_message
 
     # Test with missing secret key
     async with Client(host="localhost", port=8083) as client:
-        with pytest.raises(ValueError) as exc_info:
-            await client.request("add", MathRequest(a=1.0, b=2.0), MathResponse)
-        assert "Invalid authorization header" in str(exc_info.value)
+        response = await client.request("add", MathRequest(a=1.0, b=2.0), MathResponse)
+        assert response.success is False
+        assert response.data is None
+        assert response.error_message is not None
+        assert "Invalid authorization header" in response.error_message
 
 
 async def test_server_client_reconnection(math_server):
@@ -132,7 +152,10 @@ async def test_server_client_reconnection(math_server):
     # First request should work
     async with client:
         response = await client.request("add", MathRequest(a=1.0, b=2.0), MathResponse)
-        assert response.result == 3.0
+        assert response.success is True
+        assert isinstance(response.data, MathResponse)
+        assert response.data.result == 3.0
+        assert response.error_message is None
 
     # Stop and restart server
     await math_server.stop()
@@ -141,7 +164,10 @@ async def test_server_client_reconnection(math_server):
     # Second request should work after reconnection
     async with client:
         response = await client.request("add", MathRequest(a=2.0, b=3.0), MathResponse)
-        assert response.result == 5.0
+        assert response.success is True
+        assert isinstance(response.data, MathResponse)
+        assert response.data.result == 5.0
+        assert response.error_message is None
 
 
 async def test_auth_server_client_reconnection(auth_math_server):
@@ -151,7 +177,10 @@ async def test_auth_server_client_reconnection(auth_math_server):
     # First request should work
     async with client:
         response = await client.request("add", MathRequest(a=1.0, b=2.0), MathResponse)
-        assert response.result == 3.0
+        assert response.success is True
+        assert isinstance(response.data, MathResponse)
+        assert response.data.result == 3.0
+        assert response.error_message is None
 
     # Stop and restart server
     await auth_math_server.stop()
@@ -160,4 +189,7 @@ async def test_auth_server_client_reconnection(auth_math_server):
     # Second request should work after reconnection
     async with client:
         response = await client.request("add", MathRequest(a=2.0, b=3.0), MathResponse)
-        assert response.result == 5.0
+        assert response.success is True
+        assert isinstance(response.data, MathResponse)
+        assert response.data.result == 5.0
+        assert response.error_message is None

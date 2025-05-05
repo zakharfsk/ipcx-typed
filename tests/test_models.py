@@ -1,26 +1,50 @@
 import pytest
 from pydantic import ValidationError
 
-from ipcx_typed.models import Request, Response
+from ipcx_typed.models import Headers, Request, Response
 
 
 def test_request_model_valid():
     """Test creating a valid Request model."""
-    request = Request(endpoint="test_endpoint", data={"message": "Hello"})
+    request = Request(endpoint="test_endpoint", data={"message": "Hello"}, headers=Headers(authorization=None))
     assert request.endpoint == "test_endpoint"
     assert request.data == {"message": "Hello"}
+    assert request.headers.authorization is None
+
+
+def test_request_model_with_auth():
+    """Test creating a Request model with authorization."""
+    request = Request(endpoint="test_endpoint", data={"message": "Hello"}, headers=Headers(authorization="secret_key"))
+    assert request.endpoint == "test_endpoint"
+    assert request.data == {"message": "Hello"}
+    assert request.headers.authorization == "secret_key"
 
 
 def test_request_model_invalid_endpoint():
     """Test Request model with invalid endpoint (empty string)."""
     with pytest.raises(ValidationError):
-        Request(endpoint="", data={"message": "Hello"})
+        Request(endpoint="", data={"message": "Hello"}, headers=Headers(authorization=None))
 
 
 def test_request_model_missing_data():
     """Test Request model with missing required fields."""
     with pytest.raises(ValidationError):
         Request(endpoint="test_endpoint")  # type: ignore
+
+
+def test_request_model_missing_headers():
+    """Test Request model with missing headers."""
+    with pytest.raises(ValidationError):
+        Request(endpoint="test_endpoint", data={"message": "Hello"})  # type: ignore
+
+
+def test_headers_model_valid():
+    """Test creating valid Headers model."""
+    headers = Headers(authorization=None)
+    assert headers.authorization is None
+
+    headers = Headers(authorization="secret_key")
+    assert headers.authorization == "secret_key"
 
 
 def test_response_model_success():

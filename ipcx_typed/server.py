@@ -6,6 +6,8 @@ from typing import Any, Dict, Optional, Type, TypeVar
 import aiohttp.web
 from pydantic import BaseModel, ValidationError
 
+from ipcx_typed.errors import AuthorizationError, EndpointNotFoundError
+
 from .models import Request, Response
 
 logger = logging.getLogger(__name__)
@@ -57,8 +59,6 @@ def route(
         if not issubclass(param_model, BaseModel):
             raise ValueError(f"Model must inherit from {BaseModel.__name__} class")
 
-        print(dir(func))
-
         endpoint = Endpoint(func, param_model, return_model)
         if not name:
             Server.ROUTES[func.__name__] = endpoint
@@ -79,6 +79,7 @@ class Server:
         self,
         host: str = "localhost",
         port: int = 8080,
+        secret_key: Optional[str] = None,
         on_startup: Optional[Callable[..., Awaitable[None]]] = None,
         on_error: Optional[Callable[..., Awaitable[None]]] = None,
     ) -> None:
@@ -98,6 +99,7 @@ class Server:
         self.on_error = on_error
         self.on_startup = on_startup
         self.endpoints: Dict[str, Endpoint] = {}
+        self.secret_key = secret_key
 
     def route(
         self,
@@ -158,8 +160,12 @@ class Server:
 
                 try:
                     request = Request.model_validate_json(message.data)
+
+                    if request.headers.authorization != self.secret_key:
+                        raise AuthorizationError()
+
                     if request.endpoint not in self.endpoints:
-                        raise ValueError(f"Endpoint {request.endpoint} not found")
+                        raise EndpointNotFoundError()
 
                     endpoint = self.endpoints[request.endpoint]
                     validated_data = endpoint.param_model.model_validate(request.data)

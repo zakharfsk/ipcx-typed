@@ -1,3 +1,4 @@
+# ruff: noqa: S106
 import asyncio
 import logging
 
@@ -21,7 +22,7 @@ class EchoResponse(BaseModel):
 
 async def main():
     # Create server instance
-    server = Server(host="localhost", port=8080)
+    server = Server(host="localhost", port=8080, secret_key="secret")
 
     # Define echo endpoint
     @server.route(param_model=EchoRequest, return_model=EchoResponse)

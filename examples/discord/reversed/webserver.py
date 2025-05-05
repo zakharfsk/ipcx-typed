@@ -1,3 +1,4 @@
+# ruff: noqa: S106
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -14,7 +15,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-server = Server(host="localhost", port=8080)
+server = Server(host="localhost", port=8080, secret_key="secret")
 
 
 class UserSessionParam(BaseModel):

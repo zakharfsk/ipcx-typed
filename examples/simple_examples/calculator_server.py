@@ -1,3 +1,4 @@
+# ruff: noqa: S106
 import asyncio
 import logging
 from typing import List
@@ -40,7 +41,7 @@ class StatsResponse(BaseModel):
 
 async def main():
     # Create server instance
-    server = Server(host="localhost", port=8080)
+    server = Server(host="localhost", port=8080, secret_key="secret")
 
     # Define calculator endpoints
     @server.route(param_model=AddRequest, return_model=AddResponse)

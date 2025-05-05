@@ -1,3 +1,4 @@
+# ruff: noqa: S106
 import discord
 from discord.ext import commands
 from pydantic import BaseModel
@@ -25,7 +26,7 @@ class GuildInfo(BaseModel):
 class MyDiscordBot(commands.Bot):
     def __init__(self, intents: discord.Intents):
         super().__init__(command_prefix="!", intents=intents)
-        self.server = Server(host="localhost", port=8080)
+        self.server = Server(host="localhost", port=8080, secret_key="secret")
 
     async def setup_hook(self):
         await self.server.start()

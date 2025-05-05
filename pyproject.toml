@@ -1,6 +1,6 @@
 [project]
 name = "ipcx-typed"
-version = "0.1.3"
+version = "0.1.4"
 description = "Inter-Process Communication (IPC) library for Python with type safety"
 authors = [
     {name = "zakharfsk",email = "68950796+zakharfsk@users.noreply.github.com"}
@@ -47,10 +47,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/zakharfsk/ipcx"
-Documentation = "https://github.com/zakharfsk/ipcx/blob/main/README.md"
-Repository = "https://github.com/zakharfsk/ipcx"
-Issue = "https://github.com/zakharfsk/ipcx/issues"
+Homepage = "https://github.com/zakharfsk/ipcx-typed"
+Documentation = "https://github.com/zakharfsk/ipcx-typed/blob/main/README.md"
+Repository = "https://github.com/zakharfsk/ipcx-typed"
+Issue = "https://github.com/zakharfsk/ipcx-typed/issues"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
